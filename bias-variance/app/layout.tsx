@@ -1,27 +1,20 @@
+import MainContent from "@/components/MainContent";
 import type { Metadata } from "next";
 import "./globals.css";
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-export const metadata: Metadata = {
-  title: "Bias-Variance Playground",
-  description: "Helping to Visualize the Relationship between Bias & Variance",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-base-100">
       <body>
-        <Navbar />
-        <main className="relative
-        overflow-hidden"> 
+        <main>
+          <Navbar />
+          <MainContent />
           {children}
+          <Footer />
         </main>
-        <Footer />
       </body>
     </html>
   );

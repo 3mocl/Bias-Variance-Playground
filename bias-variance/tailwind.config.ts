@@ -13,6 +13,9 @@ module.exports = {
         montserrat: ['Montserrat', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'],
       },
+      backgroundColor: {
+        'base-100': '#ffffff', // Set to white
+      },
       colors: {
         green: {
           50: '#30AF5B',
@@ -23,7 +26,7 @@ module.exports = {
           20: '#A2A2A2',
           30: '#7B7B7B',
           50: '#585858',
-          90: '#141414',
+          90: '#E39D97'
         },
         orange: {
           50: '#FF814C',
@@ -55,5 +58,8 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["retro"],
+  },
 };
