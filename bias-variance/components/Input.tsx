@@ -12,7 +12,7 @@ export type InputValues = {
   typeOfMethod: string; // Spline or Polynomial Regression
   noiseCount: number; // Ranges from 1-5
   degreeCount: number;
-  seed:string; // Ranges from 1-4
+  seed: string; // Ranges from 1-4
   degreesOfFreedom: number;
 };
 
@@ -20,7 +20,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onInputChange }) => {
   const [inputs, setInputs] = useState<InputValues>({
     dataset: "dataset1",
     pointCount: 100,
-    typeOfMethod: "spline",
+    typeOfMethod: "regression",
     noiseCount: 1,
     degreeCount: 1,
     seed: "default",
@@ -69,17 +69,17 @@ const InputSection: React.FC<InputSectionProps> = ({ onInputChange }) => {
           </label>
           <input
             type="range"
-            min="10"
+            min="0"
             max="500"
             value={inputs.pointCount}
             className="range range-primary"
-            step="10"
+            step="50"
             onChange={(e) =>
               handleInputChange("pointCount", parseInt(e.target.value))
             }
           />
           <div className="w-full flex justify-between text-xs px-2">
-            <span>10</span>
+            <span> 0</span>
             <span>100</span>
             <span>200</span>
             <span>300</span>
@@ -90,25 +90,21 @@ const InputSection: React.FC<InputSectionProps> = ({ onInputChange }) => {
 
         <div className="form-control w-full max-w-xs mb-4">
           <label className="label">
-            <span className="label-text font-montserrat">
-              Type of Method:
-            </span>
+            <span className="label-text font-montserrat">Type of Method:</span>
           </label>
           <select
             className="select select-bordered"
             value={inputs.typeOfMethod}
             onChange={(e) => handleInputChange("typeOfMethod", e.target.value)}
           >
-            <option value="spline">Spline</option>
             <option value="regression">Polynomial Regression</option>
+            <option value="spline">Spline</option> 
           </select>
         </div>
 
         <div className="form-control w-full max-w-xs mb-4">
           <label className="label">
-            <span className="label-text font-montserrat">
-              Seed:
-            </span>
+            <span className="label-text font-montserrat">Seed:</span>
           </label>
           <select
             className="select select-bordered"
@@ -122,9 +118,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onInputChange }) => {
 
         <div className="form-control w-full max-w-xs mb-4">
           <label className="label">
-            <span className="label-text">
-              Noise Level: {inputs.noiseCount}
-            </span>
+            <span className="label-text">Noise Level: {inputs.noiseCount}</span>
           </label>
           <input
             type="range"
@@ -147,39 +141,34 @@ const InputSection: React.FC<InputSectionProps> = ({ onInputChange }) => {
         </div>
 
         {inputs.typeOfMethod === "spline" && (
-        <div className="form-control w-full max-w-xs mb-4">
-          <label className="label">
-            <span className="label-text">
-              Degrees of Freedom: {inputs.degreesOfFreedom}
-            </span>
-          </label>
-          <input
-            type="range"
-            min="2"
-            max="40"
-            value={inputs.degreesOfFreedom}
-            className="range range-primary"
-            step="1"
-            onChange={(e) =>
-              handleInputChange("degreesOfFreedom", parseInt(e.target.value))
-            }
-          />
-          <div className="w-full flex justify-between text-xs px-2">
-            <span>2</span>
-            <span>10</span>
-            <span>20</span>
-            <span>30</span>
-            <span>40</span>
+          <div className="form-control w-full max-w-xs mb-4">
+            <label className="label">
+              <span className="label-text">
+                Degrees of Freedom: {inputs.degreesOfFreedom}
+              </span>
+            </label>
+            <div className="flex justify-between">
+              {[2, 10, 40].map((value) => (
+                <button
+                  key={value}
+                  className={`btn btn-sm ${
+                    inputs.degreesOfFreedom === value
+                      ? "btn-primary"
+                      : "btn-outline"
+                  }`}
+                  onClick={() => handleInputChange("degreesOfFreedom", value)}
+                >
+                  {value}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
         {inputs.typeOfMethod === "regression" && (
           <div className="form-control w-full max-w-xs mb-4">
             <label className="label">
-              <span className="label-text">
-                Degree: {inputs.degreeCount}
-              </span>
+              <span className="label-text">Degree: {inputs.degreeCount}</span>
             </label>
             <input
               type="range"

@@ -1,81 +1,131 @@
-// components/Playground.tsx
+// Playground.tsx
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Plot from 'react-plotly.js';
-import { create, all } from 'mathjs';
-import { PlaygroundProps, Results } from './types';
-import { randomNormal } from './Utility';
+import React, { useMemo } from "react";
+import { InputValues } from "./Input";
+import { GeneratedData, DataPoint as CustomDataPoint } from "./DataGeneration";
+import { Line } from "react-chartjs-2";
+import { 
+  Chart as ChartJS, 
+  LinearScale, 
+  PointElement, 
+  LineElement, 
+  Tooltip, 
+  Legend,
+  ChartData,
+  ChartOptions
+} from 'chart.js';
+import regression from 'regression';
 
-const math = create(all, {});
+ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
-const Playground: React.FC<PlaygroundProps> = ({ inputs }) => {
-  const {
-    dataset,
-    pointCount,
-    typeOfMethod,
-    noiseCount,
-    degreeCount,
-    degreesOfFreedom,
-    seed,
-  } = inputs;
+interface PlaygroundProps {
+  inputs: InputValues;
+  data: GeneratedData;
+}
 
-  const [data, setData] = useState<any[]>([]);
-  const [results, setResults] = useState<Results>({ bias: 0, variance: 0, mse: 0 });
-
-  const generateData = () => {
-    // Set random seed
-    math.config({ randomSeed: seed });
-
-    let fx: (x: number) => number;
-    switch (dataset) {
-      case 'dataset2':
-        fx = (x) => 3 + 0.87 * x + 0.5 * x ** 2;
-        break;
-      case 'dataset3':
-        fx = (x) => 3 + 0.87 * Math.sqrt(x) + 0.5 * Math.sin(x);
-        break;
-      case 'dataset4':
-        fx = (x) => 3 + 0.87 * x;
-        break;
-      default:
-        fx = (x) => 3 + 0.87 * x ** 2 + 0.5 * x ** 3;
+const Playground: React.FC<PlaygroundProps> = ({  inputs, data }) => {
+  const polynomialRegression = useMemo(() => {
+    if (inputs.typeOfMethod === 'regression') {
+      const points: [number, number][] = data.trainingData.map(point => [point.x, point.y]);
+      return regression.polynomial(points, { order: inputs.degreeCount });
     }
+    return null;
+  }, [data.trainingData, inputs.typeOfMethod, inputs.degreeCount]);
 
-    const x = math.random([pointCount], -5, 5);
-    const noise = randomNormal(0, noiseCount, pointCount);
-    const y = x.map((xi, i) => fx(xi) + noise[i]);
+  const regressionPoints = useMemo(() => {
+    if (polynomialRegression) {
+      const xValues = data.trainingData.map(point => point.x);
+      const minX = Math.min(...xValues);
+      const maxX = Math.max(...xValues);
+      const step = (maxX - minX) / 100;
+      return Array.from({ length: 101 }, (_, i) => {
+        const x = minX + i * step;
+        return { x, y: polynomialRegression.predict(x)[1] };
+      });
+    }
+    return [];
+  }, [polynomialRegression, data.trainingData]);
 
-    return { x, y, fx };
+  const chartData: ChartData<'line'> = {
+    datasets: [
+      {
+        type: 'line' as const,
+        label: 'Training Data',
+        data: data.trainingData.map(point => ({ x: point.x, y: point.y })),
+        backgroundColor: 'rgba(251,159,159, 0.6)',
+        borderColor: 'rgba(251,159,159, 0.6)',
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        showLine: false, // This makes it appear as a scatter plot
+      },
+      ...(polynomialRegression ? [{
+        type: 'line' as const,
+        label: `Polynomial Regression (Degree ${inputs.degreeCount})`,
+        data: regressionPoints,
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 2,
+        pointRadius: 0,
+        fill: false,
+      }] : []),
+    ],
   };
 
-  const calculateResults = (x: number[], y: number[], fx: (x: number) => number): Results => {
-    // Dummy implementation for calculating bias, variance, and MSE
-    // Replace this with the actual implementation based on the R code logic
-    const bias = 0; // Placeholder
-    const variance = 0; // Placeholder
-    const mse = 0; // Placeholder
-
-    return { bias, variance, mse };
+  const chartOptions: ChartOptions<'line'> = {
+    scales: {
+      x: {
+        type: 'linear' as const,
+        position: 'bottom' as const,
+        title: {
+          display: true,
+          text: 'Independent Variable ( x )',
+        },
+      },
+      y: {
+        type: 'linear' as const,
+        position: 'left' as const,
+        title: {
+          display: true,
+          text: 'Dependent Variable ( y )',
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const label = context.dataset.label || '';
+            if (label) {
+              return `${label}: (${context.parsed.x.toFixed(2)}, ${context.parsed.y.toFixed(2)})`;
+            }
+            return `(${context.parsed.x.toFixed(2)}, ${context.parsed.y.toFixed(2)})`;
+          },
+        },
+      },
+    },
+    responsive: true,
+    maintainAspectRatio: false,
   };
-
-  useEffect(() => {
-    const { x, y, fx } = generateData();
-    setData([{ x, y, type: 'scatter', mode: 'markers' }]);
-    setResults(calculateResults(x, y, fx));
-  }, [dataset, pointCount, typeOfMethod, noiseCount, degreeCount, degreesOfFreedom, seed]);
 
   return (
-    <div>
-      <Plot
-        data={data}
-        layout={{ title: 'Bias-Variance Playground' }}
-      />
-      <div>
-        <h3>Results:</h3>
-        <p>Bias: {results.bias}</p>
-        <p>Variance: {results.variance}</p>
-        <p>MSE: {results.mse}</p>
+    <div className="w-full h-[600px] bg-white rounded-xl shadow-lg p-6 ml-4">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Data Visualization</h2>
+      <div className="w-full h-[500px]">
+        <Line data={chartData} options={chartOptions} />
       </div>
+      {/* {polynomialRegression 
+      && (
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold">Regression Equation:</h3>
+          <p>{polynomialRegression.string}</p>
+          <p>R² = {polynomialRegression.r2.toFixed(4)}</p>
+        </div>
+      )
+      } */}
     </div>
   );
 };

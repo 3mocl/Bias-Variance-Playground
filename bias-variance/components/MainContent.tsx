@@ -1,19 +1,23 @@
+// MainContent.tsx
 "use client";
 
 import React, { useState } from "react";
 import Input, { InputValues } from "./Input";
 import Playground from "./Playground";
+import { useGeneratedData } from "./DataGeneration";
 
 const MainContent: React.FC = () => {
   const [inputValues, setInputValues] = useState<InputValues>({
     dataset: "dataset1",
     pointCount: 100,
-    typeOfMethod: "spline",
+    typeOfMethod: "regression",
     noiseCount: 1,
     degreeCount: 1,
     seed: "default",
     degreesOfFreedom: 10,
   });
+
+  const generatedData = useGeneratedData(inputValues);
 
   const handleInputChange = (newInputs: InputValues) => {
     setInputValues(newInputs);
@@ -24,12 +28,11 @@ const MainContent: React.FC = () => {
       <div className="w-1/4">
         <Input onInputChange={handleInputChange} />
       </div>
-      <div className="w-3/4  flexCenter">
-        <Playground inputs={inputValues} />
+      <div className="w-3/4 flexCenter">
+        <Playground inputs={inputValues} data={generatedData} />
       </div>
     </div>
   );
-  
 };
 
 export default MainContent;
