@@ -37,7 +37,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onInputChange }) => {
   };
 
   return (
-    <div className="p-4 rounded-xl bg-amber-100 bg-opacity-35 max-container padding-container mr-5">
+    <div className="p-4 rounded-xl bg-amber-200 bg-opacity-20 max-container padding-container mr-5">
       <div className="ml-5">
         <h2 className="text-xl font-bold mb-0 font-montserrat">
           Playground Controls
@@ -73,13 +73,13 @@ const InputSection: React.FC<InputSectionProps> = ({ onInputChange }) => {
             max="500"
             value={inputs.pointCount}
             className="range range-primary"
-            step="50"
+            step="100"
             onChange={(e) =>
               handleInputChange("pointCount", parseInt(e.target.value))
             }
           />
           <div className="w-full flex justify-between text-xs px-2">
-            <span> 0</span>
+            <span>0</span>
             <span>100</span>
             <span>200</span>
             <span>300</span>

@@ -4,7 +4,7 @@ import Link from "next/link";
 const Navbar = () => {
   return (
     <nav
-      className="bg-amber-100 bg-opacity-30 flexCenter max-container
+      className="bg-amber-200 bg-opacity-20 flexCenter max-container
   padding-container relative z-30 py-7 px-4 mt-4 mx-4 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300"
     >
       <Link
