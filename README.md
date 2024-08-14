@@ -1,7 +1,5 @@
 # Bias-Variance Playground for College ML Courses
 
-### 🗓️ Jul 2024 - Present
-
 I’m currently developing an interactive **Bias-Variance Tradeoff Playground** using Next.js, crafted to elevate the learning experience for around 200 students at Lawrence University and The College of Idaho. This cutting-edge application brings complex data modeling scenarios to life, allowing users to:
 
 - **Simulate and Explore**: Adjust variables like dataset size, noise levels, and model complexity to see their effects on bias, variance, and MSE.
