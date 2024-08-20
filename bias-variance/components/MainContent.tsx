@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import Input, { InputValues } from "./Input";
 import Playground from "./Playground";
+import BiasAndVariance from "./BiasVarianceCalculations";
 import { useGeneratedData } from "./DataGeneration";
 
 const MainContent: React.FC = () => {
@@ -17,19 +18,27 @@ const MainContent: React.FC = () => {
     degreesOfFreedom: 10,
   });
 
-  const generatedData = useGeneratedData(inputValues);
-
   const handleInputChange = (newInputs: InputValues) => {
     setInputValues(newInputs);
   };
 
+  const generatedData = useGeneratedData(inputValues);
+
   return (
-    <div className="container mx-auto p-4 max-container padding-container flex">
-      <div className="w-1/4">
-        <Input onInputChange={handleInputChange} />
+    <div className="container max-container">
+      <div className="container mx-auto p-4 max-container padding-container flex">
+        <div className="w-1/4">
+          <Input onInputChange={handleInputChange} />
+        </div>
+        <div className="w-3/4 flexCenter">
+          <Playground inputs={inputValues} data={generatedData} />
+        </div>
       </div>
-      <div className="w-3/4 flexCenter">
-        <Playground inputs={inputValues} data={generatedData} />
+      <div className="">
+        <BiasAndVariance
+          inputValues={inputValues}
+          generatedData={generatedData}
+        />
       </div>
     </div>
   );

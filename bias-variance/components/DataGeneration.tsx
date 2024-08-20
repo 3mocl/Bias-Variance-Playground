@@ -23,11 +23,6 @@ const generateData = (inputs: InputValues): GeneratedData => {
   const numTotalPoints = numTrainingPoints + numTestPoints;
   const noiseSd = noiseCount * 2; // Adjusting noise level
 
-  // Set random seed if not default
-//   if (seed !== 'default') {
-//     math.config({randomSeed: Math.random()});
-//   }
-
   // Generate x values
   let x: number[];
   if (dataset === 'dataset1') {

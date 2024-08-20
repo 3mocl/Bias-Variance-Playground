@@ -78,12 +78,12 @@ const InputSection: React.FC<InputSectionProps> = ({ onInputChange }) => {
               handleInputChange("pointCount", parseInt(e.target.value))
             }
           />
-          <div className="w-full flex justify-between text-xs px-2">
-            <span>0</span>
-            <span>100</span>
-            <span>200</span>
-            <span>300</span>
-            <span>400</span>
+          <div className="w-full flex justify-between text-xs">
+            <span >0</span>
+            <span className="ml-4">100</span>
+            <span className="ml-2">200</span>
+            <span className="ml-2">300</span>
+            <span className="ml-2">400</span>
             <span>500</span>
           </div>
         </div>

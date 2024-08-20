@@ -2,6 +2,7 @@
 
 export interface PlaygroundProps {
     inputs: InputValues;
+    
   }
   
   export interface InputValues {
