@@ -3,19 +3,19 @@
 
 import React, { useMemo } from "react";
 import { InputValues } from "./Input";
-import { GeneratedData, DataPoint as CustomDataPoint } from "./DataGeneration";
+import { GeneratedData, DataPoint } from "./DataGeneration";
 import { Line } from "react-chartjs-2";
-import { 
-  Chart as ChartJS, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  Tooltip, 
+import {
+  Chart as ChartJS,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
   Legend,
   ChartData,
   ChartOptions
 } from 'chart.js';
-import regression from 'regression';
+import { createModel } from 'polynomial-regression';
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
@@ -24,11 +24,13 @@ interface PlaygroundProps {
   data: GeneratedData;
 }
 
-const Playground: React.FC<PlaygroundProps> = ({  inputs, data }) => {
+const Playground: React.FC<PlaygroundProps> = ({ inputs, data }) => {
   const polynomialRegression = useMemo(() => {
     if (inputs.typeOfMethod === 'regression') {
+      const model = createModel();
       const points: [number, number][] = data.trainingData.map(point => [point.x, point.y]);
-      return regression.polynomial(points, { order: inputs.degreeCount });
+      model.fit(points, [inputs.degreeCount]);
+      return model;
     }
     return null;
   }, [data.trainingData, inputs.typeOfMethod, inputs.degreeCount]);
@@ -41,11 +43,11 @@ const Playground: React.FC<PlaygroundProps> = ({  inputs, data }) => {
       const step = (maxX - minX) / 100;
       return Array.from({ length: 101 }, (_, i) => {
         const x = minX + i * step;
-        return { x, y: polynomialRegression.predict(x)[1] };
+        return { x, y: polynomialRegression.estimate(inputs.degreeCount, x) };
       });
     }
     return [];
-  }, [polynomialRegression, data.trainingData]);
+  }, [polynomialRegression, data.trainingData, inputs.degreeCount]);
 
   const chartData: ChartData<'line'> = {
     datasets: [
@@ -57,7 +59,7 @@ const Playground: React.FC<PlaygroundProps> = ({  inputs, data }) => {
         borderColor: 'rgba(251,159,159, 0.4)',
         pointRadius: 6,
         pointHoverRadius: 8,
-        showLine: false, // This makes it appear as a scatter plot
+        showLine: false,
       },
       ...(polynomialRegression ? [{
         type: 'line' as const,
@@ -117,15 +119,12 @@ const Playground: React.FC<PlaygroundProps> = ({  inputs, data }) => {
       <div className="w-full h-[500px]">
         <Line data={chartData} options={chartOptions} />
       </div>
-      {/* {polynomialRegression 
-      && (
+      {/* {polynomialRegression && (
         <div className="mt-4">
           <h3 className="text-lg font-semibold">Regression Equation:</h3>
-          <p>{polynomialRegression.string}</p>
-          <p>R² = {polynomialRegression.r2.toFixed(4)}</p>
+          <p>{polynomialRegression.expressions()[inputs.degreeCount]}</p>
         </div>
-      )
-      } */}
+      )} */}
     </div>
   );
 };
