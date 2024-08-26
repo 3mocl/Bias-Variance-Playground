@@ -265,7 +265,7 @@ const BiasAndVariance: React.FC<BiasAndVarianceProps> = ({
 
   return (
     <div className=" bg-white rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold text-gray-800">Bias and Variance Results</h2>
+      <h2 className="text-2xl font-bold text-gray-800 ml-2">Bias and Variance Results</h2>
       {/* <div style={{ height: "400px", marginBottom: "20px" }}>
         <Scatter
           data={chartData.trainingData}
@@ -282,8 +282,8 @@ const BiasAndVariance: React.FC<BiasAndVarianceProps> = ({
         />
       </div> */}
       <div
-        style={{ height: "300px", width: "470px" }}
-        className="flex"
+        style={{ height: "400px", width: "630px" }}
+        className="flex ml-20"
       >
         <Bar
           data={chartData.biasData}
@@ -311,7 +311,7 @@ const BiasAndVariance: React.FC<BiasAndVarianceProps> = ({
             },
           }}
         />
-        <Line
+        {/* <Line
           data={chartData.mseData}
           options={{
             responsive: true,
@@ -323,7 +323,7 @@ const BiasAndVariance: React.FC<BiasAndVarianceProps> = ({
               },
             },
           }}
-        />
+        /> */}
       </div>
     </div>
   );

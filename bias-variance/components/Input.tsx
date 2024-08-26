@@ -98,7 +98,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onInputChange }) => {
             onChange={(e) => handleInputChange("typeOfMethod", e.target.value)}
           >
             <option value="regression">Polynomial Regression</option>
-            <option value="spline">Spline</option> 
+            {/* <option value="spline">Spline</option>  */}
           </select>
         </div>
 
